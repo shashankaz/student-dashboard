@@ -1,29 +1,27 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { students } from "@/data/students";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
-  const student = students.find((s) => s.id === params.id);
+type Props = {
+  params: Promise<{ id: string }>;
+  children: React.ReactNode;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const student = students.find((s) => s.id === id);
   const title = student
     ? `${student.name} | Student Details`
     : `Student Not Found`;
   const description = student
-    ? `View details for ${student.name} (ID: ${params.id}).`
-    : `No student found with ID ${params.id}.`;
+    ? `View details for ${student.name} (ID: ${id}).`
+    : `No student found with ID ${id}.`;
   return {
     title,
     description,
   };
 }
 
-interface StudentPageLayoutProps {
-  children: React.ReactNode;
-}
-
-const StudentPageLayout = ({ children }: StudentPageLayoutProps) => {
+const StudentPageLayout = ({ children }: Props) => {
   return <div>{children}</div>;
 };
 
